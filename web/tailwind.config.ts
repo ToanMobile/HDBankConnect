@@ -1,0 +1,141 @@
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50:  '#E8F7F9',
+          100: '#C5EBEF',
+          200: '#9EDEE4',
+          300: '#77D0D9',
+          400: '#5BC4CE',
+          500: '#49B7C3',
+          600: '#3FA5B1',
+          700: '#348E99',
+          800: '#2A7780',
+          900: '#1F5A61',
+        },
+        neutral: {
+          0:   '#FFFFFF',
+          50:  '#FAFAFA',
+          100: '#F5F5F5',
+          200: '#E5E5E5',
+          300: '#D4D4D4',
+          400: '#A3A3A3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+          950: '#0A0A0A',
+        },
+        success: {
+          bg:   '#DCFCE7',
+          base: '#11A22F',
+          text: '#14532D',
+        },
+        warning: {
+          bg:   '#FEF3C7',
+          base: '#EF9900',
+          text: '#713F12',
+        },
+        danger: {
+          bg:   '#FEE2E2',
+          base: '#E7000B',
+          text: '#7F1D1D',
+        },
+        info: {
+          bg:   '#DBEAFE',
+          base: '#0088F2',
+          text: '#1E3A8A',
+        },
+        chart: {
+          1: '#F54A00',
+          2: '#009689',
+          3: '#104E64',
+          4: '#FFB900',
+          5: '#FE9A00',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'Monaco', 'monospace'],
+      },
+      fontSize: {
+        xs:   ['12px', { lineHeight: '1.5' }],
+        sm:   ['14px', { lineHeight: '1.5' }],
+        base: ['16px', { lineHeight: '1.5' }],
+        lg:   ['18px', { lineHeight: '1.4' }],
+        xl:   ['20px', { lineHeight: '1.4' }],
+        '2xl': ['24px', { lineHeight: '1.3' }],
+        '3xl': ['30px', { lineHeight: '1.25' }],
+        '4xl': ['36px', { lineHeight: '1.2' }],
+      },
+      borderRadius: {
+        none: '0',
+        sm:   '4px',
+        md:   '8px',
+        lg:   '10px',
+        xl:   '16px',
+        '2xl': '20px',
+        full: '9999px',
+      },
+      boxShadow: {
+        sm:   '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        md:   '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04)',
+        lg:   '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
+        none: 'none',
+      },
+      spacing: {
+        '0':  '0',
+        '1':  '4px',
+        '2':  '8px',
+        '3':  '12px',
+        '4':  '16px',
+        '5':  '20px',
+        '6':  '24px',
+        '7':  '28px',
+        '8':  '32px',
+        '9':  '36px',
+        '10': '40px',
+        '11': '44px',
+        '12': '48px',
+        '14': '56px',
+        '16': '64px',
+        '20': '80px',
+        '24': '96px',
+      },
+      transitionTimingFunction: {
+        standard:   'cubic-bezier(0.4, 0.0, 0.2, 1)',
+        decelerate: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+        accelerate: 'cubic-bezier(0.4, 0.0, 1, 1)',
+      },
+      transitionDuration: {
+        instant: '100ms',
+        fast:    '200ms',
+        base:    '300ms',
+        slow:    '500ms',
+      },
+      animation: {
+        'fade-in': 'fadeIn 200ms ease-out',
+        'slide-in': 'slideIn 300ms cubic-bezier(0.0, 0.0, 0.2, 1)',
+        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
