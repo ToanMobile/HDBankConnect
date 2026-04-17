@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Activity, Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
+import finosIcon from '@/assets/finos-icon.webp';
 import { toast } from 'sonner';
 import { api, isAppError } from '@/lib/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -70,9 +71,11 @@ export function LoginPage(): JSX.Element {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-500 mb-4 shadow-md">
-            <Activity className="w-7 h-7 text-white" aria-hidden="true" />
-          </div>
+          <img
+            src={finosIcon}
+            alt="FinOS"
+            className="w-14 h-14 rounded-2xl mb-4 shadow-md object-contain bg-white"
+          />
           <h1 className="text-2xl font-bold text-neutral-950 text-center">
             eCheckAI
           </h1>

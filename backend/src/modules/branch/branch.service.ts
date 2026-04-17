@@ -64,7 +64,7 @@ export class BranchService {
       }
 
       const [items, total] = await qb
-        .orderBy('branch.name', 'ASC')
+        .orderBy('branch.createdAt', 'DESC')
         .skip(skip)
         .take(limit)
         .getManyAndCount();

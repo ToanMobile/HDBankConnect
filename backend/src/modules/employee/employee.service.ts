@@ -82,7 +82,7 @@ export class EmployeeService {
     }
 
     const [items, total] = await qb
-      .orderBy('emp.fullName', 'ASC')
+      .orderBy('emp.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();

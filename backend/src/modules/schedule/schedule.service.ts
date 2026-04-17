@@ -65,7 +65,7 @@ export class ScheduleService {
          FROM schedules s
          LEFT JOIN branches b ON b.id = s.branch_id
          WHERE 1=1 ${branchFilter}
-         ORDER BY s.checkin_time ASC
+         ORDER BY s.created_at DESC
          LIMIT $${baseParams.length + 1} OFFSET $${baseParams.length + 2}`,
         [...baseParams, limit, skip],
       ),

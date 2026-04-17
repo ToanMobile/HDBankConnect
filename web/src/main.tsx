@@ -47,13 +47,26 @@ root.render(
 
         {/* Global toast notifications */}
         <Toaster
-          position="bottom-right"
+          position="top-center"
           richColors
+          expand
           closeButton
           toastOptions={{
-            duration: 4000,
+            duration: 2500,
+            style: {
+              fontSize: '15px',
+              padding: '16px 20px',
+              minHeight: '64px',
+              minWidth: '380px',
+              borderRadius: '12px',
+              fontWeight: 500,
+              boxShadow:
+                '0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            },
             classNames: {
-              toast: 'font-sans text-sm',
+              toast: 'font-sans',
+              title: 'text-[15px] font-semibold',
+              description: 'text-sm',
             },
           }}
         />

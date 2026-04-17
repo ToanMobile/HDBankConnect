@@ -42,7 +42,7 @@ const createEmployeeSchema = z.object({
   employee_code: z.string().min(1, 'Mã nhân viên không được để trống'),
   full_name: z.string().min(1, 'Họ tên không được để trống'),
   email: z.string().email('Email không đúng định dạng'),
-  phone: z.string().optional(),
+  phone_number: z.string().optional(),
   role: z.enum(['super_admin', 'hr', 'branch_manager', 'employee']),
   branch_id: z.string().optional(),
   password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự'),
@@ -150,7 +150,7 @@ function CreateEmployeeDialog({
     mutationFn: async (data: CreateEmployeeFormData) => {
       const dto: CreateEmployeeDto = {
         ...data,
-        phone: data.phone || undefined,
+        phone_number: data.phone_number || undefined,
         branch_id: data.branch_id || undefined,
       };
       return createEmployee(dto);
@@ -213,7 +213,7 @@ function CreateEmployeeDialog({
                 type="tel"
                 className="input"
                 placeholder="0901234567"
-                {...register('phone')}
+                {...register('phone_number')}
               />
             </div>
           </div>

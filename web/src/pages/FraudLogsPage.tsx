@@ -174,7 +174,7 @@ function FraudDetailModal({
               </h3>
             </div>
             <div className="bg-neutral-50 rounded-lg p-4 space-y-2">
-              {Object.entries(fraud.device_snapshot).map(([key, val]) => (
+              {Object.entries(((fraud as unknown as { details?: { device?: Record<string, unknown> } }).details?.device) ?? fraud.device_snapshot ?? {}).map(([key, val]) => (
                 <div key={key} className="flex items-start justify-between gap-4">
                   <span className="text-xs text-neutral-500 min-w-[140px] shrink-0">
                     {key}
@@ -207,7 +207,7 @@ function FraudDetailModal({
               </h3>
             </div>
             <div className="bg-neutral-50 rounded-lg p-4 space-y-2">
-              {Object.entries(fraud.location_snapshot).map(([key, val]) => (
+              {Object.entries(((fraud as unknown as { details?: { location?: Record<string, unknown> } }).details?.location) ?? fraud.location_snapshot ?? {}).map(([key, val]) => (
                 <div key={key} className="flex items-start justify-between gap-4">
                   <span className="text-xs text-neutral-500 min-w-[140px] shrink-0">
                     {key}
@@ -224,7 +224,7 @@ function FraudDetailModal({
           <div className="flex items-center gap-2">
             <span className="text-xs text-neutral-500">IP Address:</span>
             <span className="font-mono text-xs text-neutral-700">
-              {fraud.client_ip}
+              {fraud.client_ip ?? (fraud as unknown as { ip_address?: string }).ip_address ?? '—'}
             </span>
           </div>
 

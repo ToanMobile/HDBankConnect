@@ -7,38 +7,64 @@
 import { chromium } from 'playwright';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 
 const ROOT = '/Volumes/Data/GalaxyHolding/HDBankConnect';
 const BASE_URL = 'http://localhost:5173';
 const VIDEO_DIR = path.join(ROOT, '_video_tmp');
 const OUT_FILE = path.join(ROOT, 'portal-demo.webm');
 
-// Helpers
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function pause(ms = 400) { await sleep(ms); }
 
-async function pause(ms = 1200) { await sleep(ms); }
+const SUFFIX = Date.now().toString().slice(-6);
 
 async function typeSlowly(page, selector, text, opts = {}) {
   await page.fill(selector, '');
-  await page.type(selector, text, { delay: 60, ...opts });
+  await page.type(selector, text, { delay: 45, ...opts });
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// Click sidebar link, then race: API response for target endpoint OR first row.
+// API-based wait unblocks the tab switch the moment the real data arrives.
+// Wait for sonner toast to appear and auto-dismiss, then caller can proceed
+async function waitToastDismiss(page, maxMs = 4500) {
+  const toast = page.locator('[data-sonner-toast]').first();
+  await toast.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
+  await toast.waitFor({ state: 'hidden', timeout: maxMs }).catch(() => {});
+}
+
+async function gotoTab(page, linkSelector, urlFallback) {
+  const link = page.locator(linkSelector).first();
+  const found = await link.count().catch(() => 0);
+  if (found > 0) {
+    await link.click({ timeout: 3000 }).catch(async () => {
+      await page.goto(urlFallback, { waitUntil: 'domcontentloaded' });
+    });
+  } else {
+    await page.goto(urlFallback, { waitUntil: 'domcontentloaded' });
+  }
+  await pause(500);
+}
+
 (async () => {
   fs.mkdirSync(VIDEO_DIR, { recursive: true });
 
   const browser = await chromium.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    channel: 'chrome',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+    ],
   });
 
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
-    recordVideo: {
-      dir: VIDEO_DIR,
-      size: { width: 1440, height: 900 },
-    },
+    viewport: { width: 1280, height: 800 },
+    acceptDownloads: true,
+    deviceScaleFactor: 1,
+    recordVideo: { dir: VIDEO_DIR, size: { width: 1280, height: 800 } },
   });
 
   const page = await context.newPage();
@@ -46,294 +72,224 @@ async function typeSlowly(page, selector, text, opts = {}) {
 
   console.log('🎬 Bắt đầu quay video portal demo...\n');
 
-  // ══════════════════════════════════════════════════════
-  // 1. TRANG LOGIN
-  // ══════════════════════════════════════════════════════
+  // ═══ LOGIN ═══
   console.log('1️⃣  Trang Login');
-  await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
-  await pause(1500);
-
-  // Nhập email
-  await page.click('input[type="email"], input[name="email"], input[placeholder*="mail" i]');
-  await pause(400);
-  await typeSlowly(page, 'input[type="email"], input[name="email"], input[placeholder*="mail" i]', 'admin@smartattendance.vn');
-  await pause(600);
-
-  // Nhập mật khẩu
-  await page.click('input[type="password"]');
+  await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+  await pause(700);
+  await typeSlowly(page, 'input[type="email"]', 'admin@smartattendance.vn');
   await pause(400);
   await typeSlowly(page, 'input[type="password"]', 'SuperAdmin@2025!');
-  await pause(800);
-
-  // Click Login
+  await pause(600);
   await page.click('button[type="submit"]');
   await page.waitForURL('**/dashboard**', { timeout: 10000 }).catch(() => {});
-  await page.waitForLoadState('networkidle');
-  await pause(2000);
+  await pause(800);
 
-  // ══════════════════════════════════════════════════════
-  // 2. DASHBOARD
-  // ══════════════════════════════════════════════════════
+  // ═══ DASHBOARD ═══
   console.log('2️⃣  Dashboard');
-  await pause(1500);
-
-  // Cuộn xuống xem stats + chart
-  await page.mouse.wheel(0, 400);
-  await pause(1000);
-  await page.mouse.wheel(0, 400);
   await pause(1200);
-  await page.mouse.wheel(0, -800);
-  await pause(800);
-
-  // ══════════════════════════════════════════════════════
-  // 3. QUẢN LÝ CHI NHÁNH
-  // ══════════════════════════════════════════════════════
-  console.log('3️⃣  Quản lý Chi nhánh');
-  // Click sidebar "Chi nhánh" hoặc "Branches"
-  const branchLink = page.locator('a[href*="branch"], a:has-text("Chi nhánh"), a:has-text("Branch"), nav a:nth-child(2)').first();
-  await branchLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/branches`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(1500);
-
-  // Cuộn xem danh sách
-  await page.mouse.wheel(0, 300);
-  await pause(800);
-
-  // Click vào branch đầu tiên để xem detail
-  const firstBranchRow = page.locator('table tbody tr, [data-testid="branch-row"], .branch-item').first();
-  const hasBranchRow = await firstBranchRow.count() > 0;
-  if (hasBranchRow) {
-    await firstBranchRow.click();
-    await pause(1200);
-    // Cuộn xem form detail
-    await page.mouse.wheel(0, 300);
-    await pause(800);
-    await page.mouse.wheel(0, -300);
-    await pause(600);
-  }
-
-  // Mở form tạo mới (nút Add / Thêm)
-  const addBranchBtn = page.locator('button:has-text("Thêm"), button:has-text("Add"), button:has-text("Tạo"), button:has-text("New branch")').first();
-  const hasAddBtn = await addBranchBtn.count() > 0;
-  if (hasAddBtn) {
-    await addBranchBtn.click();
-    await pause(1200);
-    // Điền vào form
-    const nameInput = page.locator('input[name="name"], input[placeholder*="tên" i], input[placeholder*="name" i]').first();
-    if (await nameInput.count() > 0) {
-      await typeSlowly(page, 'input[name="name"], input[placeholder*="tên" i], input[placeholder*="name" i]', 'HDBank Demo');
-      await pause(400);
-    }
-    // Đóng / Cancel
-    const cancelBtn = page.locator('button:has-text("Hủy"), button:has-text("Cancel"), button:has-text("Đóng")').first();
-    if (await cancelBtn.count() > 0) {
-      await cancelBtn.click();
-      await pause(800);
-    } else {
-      await page.keyboard.press('Escape');
-      await pause(800);
-    }
-  }
-
-  await pause(1000);
-
-  // ══════════════════════════════════════════════════════
-  // 4. QUẢN LÝ CA LÀM VIỆC (SCHEDULE)
-  // ══════════════════════════════════════════════════════
-  console.log('4️⃣  Quản lý Ca làm việc');
-  const scheduleLink = page.locator('a[href*="schedule"], a:has-text("Ca làm"), a:has-text("Schedule"), a:has-text("Lịch")').first();
-  await scheduleLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/schedules`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(1500);
-
-  await page.mouse.wheel(0, 300);
-  await pause(800);
-
-  // Click row đầu tiên
-  const firstScheduleRow = page.locator('table tbody tr').first();
-  if (await firstScheduleRow.count() > 0) {
-    await firstScheduleRow.click();
-    await pause(1000);
-    await page.keyboard.press('Escape');
-    await pause(600);
-  }
-
-  // Mở dialog tạo schedule mới
-  const addScheduleBtn = page.locator('button:has-text("Thêm"), button:has-text("Add"), button:has-text("Tạo ca"), button:has-text("New")').first();
-  if (await addScheduleBtn.count() > 0) {
-    await addScheduleBtn.click();
-    await pause(1000);
-    const cancelBtn2 = page.locator('button:has-text("Hủy"), button:has-text("Cancel")').first();
-    if (await cancelBtn2.count() > 0) {
-      await cancelBtn2.click();
-    } else {
-      await page.keyboard.press('Escape');
-    }
-    await pause(600);
-  }
-
-  await pause(1000);
-
-  // ══════════════════════════════════════════════════════
-  // 5. QUẢN LÝ NHÂN VIÊN
-  // ══════════════════════════════════════════════════════
-  console.log('5️⃣  Quản lý Nhân viên');
-  const empLink = page.locator('a[href*="employee"], a:has-text("Nhân viên"), a:has-text("Employee")').first();
-  await empLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/employees`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(1500);
-
-  // Xem bảng danh sách
-  await page.mouse.wheel(0, 300);
-  await pause(800);
-  await page.mouse.wheel(0, 300);
-  await pause(600);
-  await page.mouse.wheel(0, -600);
-  await pause(600);
-
-  // Thử tìm kiếm
-  const searchInput = page.locator('input[placeholder*="tìm" i], input[placeholder*="search" i], input[type="search"]').first();
-  if (await searchInput.count() > 0) {
-    await searchInput.click();
-    await typeSlowly(page, 'input[placeholder*="tìm" i], input[placeholder*="search" i], input[type="search"]', 'Nguyen');
-    await pause(1200);
-    await searchInput.clear();
-    await pause(600);
-  }
-
-  // Click vào nhân viên đầu tiên
-  const firstEmpRow = page.locator('table tbody tr').first();
-  if (await firstEmpRow.count() > 0) {
-    await firstEmpRow.click();
-    await pause(1200);
-    await page.mouse.wheel(0, 200);
-    await pause(600);
-    const closeBtn = page.locator('button:has-text("Đóng"), button:has-text("Close"), button[aria-label*="close"]').first();
-    if (await closeBtn.count() > 0) {
-      await closeBtn.click();
-    } else {
-      await page.keyboard.press('Escape');
-    }
-    await pause(600);
-  }
-
-  await pause(1000);
-
-  // ══════════════════════════════════════════════════════
-  // 6. CHẤM CÔNG (ATTENDANCE)
-  // ══════════════════════════════════════════════════════
-  console.log('6️⃣  Chấm công Attendance');
-  const attLink = page.locator('a[href*="attendance"], a:has-text("Chấm công"), a:has-text("Attendance")').first();
-  await attLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/attendance`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(1500);
-
-  // Xem bảng
-  await page.mouse.wheel(0, 300);
-  await pause(800);
   await page.mouse.wheel(0, 400);
   await pause(800);
-  await page.mouse.wheel(0, -700);
+  await page.mouse.wheel(0, 400);
+  await pause(1000);
+  await page.mouse.wheel(0, -800);
   await pause(600);
 
-  // Filter theo ngày (nếu có date picker)
-  const datePicker = page.locator('input[type="date"], input[placeholder*="date" i], input[placeholder*="ngày" i]').first();
-  if (await datePicker.count() > 0) {
-    await datePicker.click();
-    await pause(600);
-    await page.keyboard.press('Escape');
-    await pause(400);
-  }
+  // ═══ CHI NHÁNH ═══
+  console.log('3️⃣  Quản lý Chi nhánh');
+  await gotoTab(page, 'a[href*="branch"], a:has-text("Chi nhánh")', `${BASE_URL}/branches`, /\/branches\?/);
+  await pause(600);
+  await page.getByRole('button', { name: 'Tạo mới' }).first().click();
+  await pause(900);
+  await typeSlowly(page, '#code', `Q1-${SUFFIX}`);
+  await pause(200);
+  await typeSlowly(page, '#name', `HDBank Chi nhánh Demo ${SUFFIX}`);
+  await pause(200);
+  await typeSlowly(page, '#address', '123 Nguyễn Huệ, Quận 1, TP.HCM');
+  await pause(300);
+  await page.fill('#latitude', '10.776900');
+  await pause(300);
+  await page.fill('#longitude', '106.700900');
+  await pause(300);
+  const bssidInput = page.locator('input[placeholder="AA:BB:CC:DD:EE:FF"]').first();
+  if (await bssidInput.count() > 0) await bssidInput.fill('AA:BB:CC:DD:EE:FF');
+  await pause(500);
+  await page.mouse.wheel(0, 400);
+  await pause(600);
+  await page.getByRole('button', { name: 'Tạo chi nhánh' }).click();
+  await waitToastDismiss(page);
+  console.log(`   ✓ Tạo chi nhánh Q1-${SUFFIX}`);
 
-  // Thử export CSV nếu có nút
-  const exportBtn = page.locator('button:has-text("Export"), button:has-text("Xuất"), a:has-text("CSV")').first();
+  // ═══ CA LÀM VIỆC ═══
+  console.log('4️⃣  Quản lý Ca làm việc');
+  await gotoTab(page, 'a[href*="schedule"], a:has-text("Ca làm"), a:has-text("Lịch")', `${BASE_URL}/schedules`, /\/schedules/);
+  await pause(600);
+  await page.getByRole('button', { name: 'Tạo lịch ca' }).first().click();
+  await pause(900);
+  const matchedValue = await page.evaluate((suf) => {
+    const sel = document.querySelector('#branch_select');
+    if (!sel) return null;
+    const opt = Array.from(sel.options).find(o => o.textContent?.includes(suf));
+    return opt?.value ?? null;
+  }, SUFFIX);
+  if (matchedValue) await page.selectOption('#branch_select', matchedValue);
+  else await page.selectOption('#branch_select', { index: 1 });
+  await pause(500);
+  await page.fill('#checkin_time', '08:00');
+  await pause(300);
+  await page.fill('#checkout_time', '17:30');
+  await pause(300);
+  await page.fill('#window_minutes', '15');
+  await pause(400);
+  for (const d of ['T2', 'T3', 'T4', 'T5', 'T6']) {
+    const btn = page.getByRole('button', { name: d, exact: true }).first();
+    if (await btn.count() > 0) {
+      const pressed = await btn.getAttribute('aria-pressed');
+      if (pressed !== 'true') await btn.click();
+      await pause(150);
+    }
+  }
+  await pause(600);
+  await page.getByRole('button', { name: 'Lưu', exact: true }).click();
+  await waitToastDismiss(page);
+  console.log('   ✓ Tạo lịch ca 08:00 – 17:30 (T2–T6)');
+
+  // ═══ NHÂN VIÊN ═══
+  console.log('5️⃣  Quản lý Nhân viên');
+  await gotoTab(page, 'a[href*="employee"], a:has-text("Nhân viên")', `${BASE_URL}/employees`, /\/employees\?/);
+  await pause(600);
+  await page.getByRole('button', { name: 'Tạo nhân viên' }).first().click();
+  await pause(900);
+  await page.fill('#emp-code', `NV${SUFFIX}`);
+  await pause(250);
+  await page.fill('#emp-phone', '0901234567');
+  await pause(250);
+  await page.fill('#emp-name', 'Nguyễn Văn Demo');
+  await pause(250);
+  await page.fill('#emp-email', `demo${SUFFIX}@hdbank.vn`);
+  await pause(300);
+  await page.selectOption('#emp-role', 'employee').catch(() => {});
+  await pause(350);
+  await page.selectOption('#emp-branch', { index: 1 }).catch(() => {});
+  await pause(300);
+  await page.fill('#emp-password', 'Demo@2025!');
+  await pause(600);
+  await page.getByRole('button', { name: 'Tạo nhân viên', exact: true }).last().click();
+  await waitToastDismiss(page);
+  console.log(`   ✓ Tạo nhân viên NV${SUFFIX}`);
+
+  // ═══ ATTENDANCE ═══
+  console.log('6️⃣  Chấm công Attendance');
+  await gotoTab(page, 'a[href*="attendance"], a:has-text("Chấm công")', `${BASE_URL}/attendance`, /\/attendance\?/);
+  await pause(600);
+  await page.mouse.wheel(0, 300);
+  await pause(700);
+  await page.mouse.wheel(0, -300);
+  await pause(500);
+  const exportBtn = page.getByRole('button', { name: /Xuất CSV/i }).first();
   if (await exportBtn.count() > 0) {
     await exportBtn.scrollIntoViewIfNeeded();
     await pause(400);
-    await exportBtn.hover();
-    await pause(800);
+    try {
+      const [download] = await Promise.all([
+        page.waitForEvent('download', { timeout: 15000 }),
+        exportBtn.click(),
+      ]);
+      const csvPath = path.join(ROOT, `attendance-export-${SUFFIX}.csv`);
+      await download.saveAs(csvPath);
+      const size = fs.statSync(csvPath).size;
+      console.log(`   ✓ Xuất CSV: ${csvPath} (${size} bytes)`);
+      await pause(1200);
+    } catch (err) {
+      console.log('   ⚠ Export CSV timeout:', err.message);
+    }
   }
 
-  await pause(1000);
-
-  // ══════════════════════════════════════════════════════
-  // 6.5 PHÁT HIỆN GIAN LẬN (FRAUD LOGS)
-  // ══════════════════════════════════════════════════════
+  // ═══ FRAUD ═══
   console.log('6️⃣ ½ Phát hiện gian lận');
-  const fraudLink = page.locator('a[href*="fraud"], a:has-text("Phát hiện gian lận"), a:has-text("Gian lận"), a:has-text("Fraud")').first();
-  await fraudLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/fraud`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(1800);
-
-  // Cuộn xem danh sách fraud logs
-  await page.mouse.wheel(0, 300);
-  await pause(800);
+  await gotoTab(page, 'a[href*="fraud"], a:has-text("Gian lận"), a:has-text("Phát hiện")', `${BASE_URL}/fraud`, /\/fraud/);
+  await pause(700);
+  // Lướt danh sách fraud logs
   await page.mouse.wheel(0, 400);
-  await pause(800);
-  await page.mouse.wheel(0, -700);
+  await pause(900);
+  await page.mouse.wheel(0, -400);
   await pause(600);
 
-  // Thử filter theo severity
-  const severitySelect = page.locator('select').first();
-  if (await severitySelect.count() > 0) {
-    await severitySelect.click();
-    await pause(500);
-    await page.keyboard.press('Escape');
-    await pause(500);
-  }
-
-  // Click vào fraud log đầu tiên để xem detail modal
-  const firstFraudRow = page.locator('table tbody tr').first();
+  // ── Click row đầu → mở modal, xem chi tiết đầy đủ & tương tác ──
+  // Chọn row có snapshot đầy đủ (mock_location / device_mismatch / schedule_window)
+  const richRow = page.locator('tr[role="button"]', { hasText: /mock_location|device_mismatch|schedule_window/ }).first();
+  const firstFraudRow = (await richRow.count()) > 0 ? richRow : page.locator('tr[role="button"]').first();
+  await firstFraudRow.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
   if (await firstFraudRow.count() > 0) {
     await firstFraudRow.click();
-    await pause(1500);
-    // Cuộn trong modal
-    await page.mouse.wheel(0, 300);
-    await pause(800);
-    await page.mouse.wheel(0, -300);
-    await pause(600);
-    // Đóng modal
-    const closeBtn = page.locator('button:has-text("Đóng"), button:has-text("Close"), button[aria-label*="close" i]').first();
-    if (await closeBtn.count() > 0) {
-      await closeBtn.click();
-    } else {
-      await page.keyboard.press('Escape');
+    await pause(1400); // header + severity badge + employee/time grid
+    const modal = page.locator('[role="dialog"], [aria-labelledby="fraud-modal-title"]').first();
+    if (await modal.count() > 0) await modal.hover();
+
+    // Hover lên severity badge để nhấn mạnh mức độ
+    const severityBadge = page.locator('[role="dialog"] >> text=/critical|high|medium|low/i').first();
+    if (await severityBadge.count() > 0) {
+      await severityBadge.hover().catch(() => {});
+      await pause(900);
     }
-    await pause(800);
+
+    // Scroll xuống "Thông tin thiết bị" — hover vào dòng VPN/mock (màu đỏ)
+    await page.mouse.wheel(0, 220);
+    await pause(1600);
+    const vpnRow = page.locator('[role="dialog"] >> text=/is_vpn_active|is_mock_location/').first();
+    if (await vpnRow.count() > 0) {
+      await vpnRow.hover().catch(() => {});
+      await pause(1200);
+    }
+
+    // Scroll tiếp "Thông tin vị trí" + GPS accuracy
+    await page.mouse.wheel(0, 250);
+    await pause(1800);
+
+    // Scroll xem IP Address
+    await page.mouse.wheel(0, 200);
+    await pause(1500);
+
+    // Click vào textarea "Ghi chú xử lý" và gõ note
+    const noteArea = page.locator('#resolution-note');
+    if (await noteArea.count() > 0) {
+      await noteArea.scrollIntoViewIfNeeded();
+      await pause(500);
+      await noteArea.click();
+      await pause(300);
+      await noteArea.type('Xác minh: VPN + mock GPS — block thiết bị, yêu cầu NV đăng ký lại.', { delay: 35 });
+      await pause(1200);
+    }
+
+    // Hover nút "Xác nhận đã xử lý" để show action khả dụng (không click — tránh mutate)
+    const resolveBtn = page.getByRole('button', { name: /Xác nhận đã xử lý/i }).first();
+    if (await resolveBtn.count() > 0) {
+      await resolveBtn.hover().catch(() => {});
+      await pause(1200);
+    }
+
+    // Đóng modal
+    const closeBtn = page.getByRole('button', { name: /^Đóng$/ }).first();
+    if (await closeBtn.count() > 0) await closeBtn.click();
+    else await page.keyboard.press('Escape');
+    await pause(600);
+
+    // Mở row severity khác để show variety
+    const secondRow = page.locator('tr[role="button"]').nth(2);
+    if (await secondRow.count() > 0) {
+      await secondRow.click();
+      await pause(1200);
+      await page.mouse.wheel(0, 300);
+      await pause(1200);
+      await page.mouse.wheel(0, 300);
+      await pause(1200);
+      const closeBtn2 = page.getByRole('button', { name: /^Đóng$/ }).first();
+      if (await closeBtn2.count() > 0) await closeBtn2.click();
+      else await page.keyboard.press('Escape');
+      await pause(500);
+    }
+    console.log('   ✓ Mở fraud detail modal — severity, device (VPN), location, IP, note');
   }
 
-  await pause(1000);
-
-  // ══════════════════════════════════════════════════════
-  // 7. QUAY LẠI DASHBOARD — KẾT THÚC
-  // ══════════════════════════════════════════════════════
-  console.log('7️⃣  Quay về Dashboard');
-  const dashLink = page.locator('a[href*="dashboard"], a:has-text("Dashboard"), a:has-text("Tổng quan"), nav a:first-child').first();
-  await dashLink.click({ timeout: 8000 }).catch(async () => {
-    await page.goto(`${BASE_URL}/dashboard`, { waitUntil: 'networkidle' });
-  });
-  await page.waitForLoadState('networkidle');
-  await pause(2000);
-
-  // Cuộn một vòng để kết thúc đẹp
-  await page.mouse.wheel(0, 500);
-  await pause(800);
-  await page.mouse.wheel(0, -500);
-  await pause(1500);
-
-  // ══════════════════════════════════════════════════════
-  // XUẤT VIDEO
-  // ══════════════════════════════════════════════════════
   console.log('\n⏹  Dừng quay, xuất video...');
   const videoPath = await page.video()?.path();
   await context.close();
@@ -346,7 +302,7 @@ async function typeSlowly(page, selector, text, opts = {}) {
     console.log(`\n✅ Video đã xuất: ${OUT_FILE}`);
     console.log(`   Kích thước: ${size} MB`);
   } else {
-    console.error('❌ Không tìm thấy file video. Path:', videoPath);
+    console.error('❌ Không tìm thấy file video.');
     process.exit(1);
   }
 })();

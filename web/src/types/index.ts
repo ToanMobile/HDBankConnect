@@ -239,7 +239,7 @@ export interface CreateEmployeeDto {
   employee_code: string;
   full_name: string;
   email: string;
-  phone?: string;
+  phone_number?: string;
   role: UserRole;
   branch_id?: string;
   password: string;

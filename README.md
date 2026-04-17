@@ -11,7 +11,7 @@ Built by **Giải Pháp Số** · ⏱ **2 days build** · 🏢 **100 chi nhánh 
 
 | Kênh | Nội dung | Link |
 |---|---|---|
-| 🖥 Portal (Web) | Login → Dashboard → Chi nhánh → Ca làm → Nhân viên → Chấm công → Phát hiện gian lận | [portal-demo.mp4](https://files.catbox.moe/iunyfn.mp4) |
+| 🖥 Portal (Web) | Login → Dashboard → **Tạo chi nhánh** → **Tạo ca làm** → **Tạo nhân viên** → **Xuất CSV** → Fraud detail modal | [portal-demo.mp4](https://files.catbox.moe/euo5jp.mp4) |
 | 📱 Mobile (Android) | Login → Home clock → Click **CHECK OUT** → History → Report → Profile → Chấm công bù | [mobile-demo.mp4](https://files.catbox.moe/vp600o.mp4) |
 
 ---
