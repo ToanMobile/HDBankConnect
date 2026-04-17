@@ -7,6 +7,33 @@ Built by **Giải Pháp Số** · ⏱ **2 days build** · 🏢 **100 chi nhánh 
 
 ---
 
+## Demo videos
+
+| Kênh | Nội dung | Link |
+|---|---|---|
+| 🖥 Portal (Web) | Login → Dashboard → Chi nhánh → Ca làm → Nhân viên → Chấm công → Phát hiện gian lận | [portal-demo.mp4](https://files.catbox.moe/iunyfn.mp4) |
+| 📱 Mobile (Android) | Login → Home clock → Click **CHECK OUT** → History → Report → Profile → Chấm công bù | [mobile-demo.mp4](https://files.catbox.moe/vp600o.mp4) |
+
+---
+
+## Quick start (1 câu lệnh)
+
+```bash
+bash scripts/dev.sh
+```
+
+Script tự chạy: `npm install` backend + web → `nest build` → `migration:run` → `seed:fake` (nếu `FAKE_DATA=true`) → start **backend :3000** + **web :5173** song song.
+
+**Prerequisite**: Node 20+, PostgreSQL 16 và Redis 7 đang chạy (local hoặc remote — config trong `backend/.env`).
+
+Tuỳ chọn seed data demo:
+
+```bash
+FAKE_DATA=true bash scripts/dev.sh     # chèn 100 branches, 5000 employees, 30 ngày attendance
+```
+
+---
+
 ```
   5,000 nhân viên         100 chi nhánh        ~7,500 LoC
   đồng thời check-in      quản lý độc lập      3 platform apps
