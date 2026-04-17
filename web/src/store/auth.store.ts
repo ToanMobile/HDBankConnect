@@ -58,7 +58,7 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: 'smart-attendance-auth',
+      name: 'echeck-ai-auth',
       storage: createJSONStorage(() => localStorage),
       // Restore user + tokens from storage on page reload.
       // We also validate isAuthenticated based on stored token existence.

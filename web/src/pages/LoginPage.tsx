@@ -35,7 +35,7 @@ export function LoginPage(): JSX.Element {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: 'admin@smartattendance.vn', password: 'Admin@2025!' },
   });
 
   async function onSubmit(data: LoginFormData): Promise<void> {
@@ -74,7 +74,7 @@ export function LoginPage(): JSX.Element {
             <Activity className="w-7 h-7 text-white" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-neutral-950 text-center">
-            Smart Attendance
+            eCheckAI
           </h1>
           <p className="text-sm text-neutral-500 mt-1 text-center">
             Hệ thống chấm công thông minh
@@ -191,7 +191,7 @@ export function LoginPage(): JSX.Element {
         </div>
 
         <p className="text-center text-xs text-neutral-400 mt-6">
-          Smart Attendance V2 · Giải Pháp Số
+          eCheckAI V2 · Giải Pháp Số
         </p>
       </div>
     </div>

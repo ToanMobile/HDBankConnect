@@ -1,4 +1,4 @@
-# DATABASE_SCHEMA.md — Smart Attendance V2
+# DATABASE_SCHEMA.md — eCheckAI V2
 
 > PostgreSQL 16 + TypeORM. Mọi table đều có `id`, `created_at`, `updated_at`.  
 > Migration bắt buộc — không dùng `synchronize: true` ở production.

@@ -1,4 +1,4 @@
-# ENV_TEMPLATE.md — Smart Attendance V2
+# ENV_TEMPLATE.md — eCheckAI V2
 
 > Copy file này thành `.env` (backend), `.env` (web), và config tương ứng cho mobile.  
 > KHÔNG commit file `.env` thực tế vào git. Chỉ commit file này.
@@ -12,13 +12,13 @@
 NODE_ENV=development          # development | production | test
 PORT=3000
 API_PREFIX=api/v1
-APP_NAME="Smart Attendance V2"
+APP_NAME="eCheckAI V2"
 APP_VERSION=1.0.0
 
 # ─── Database (PostgreSQL 16) ────────────────────────────────────────────────
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=smart_attendance
+DB_NAME=echeck_ai
 DB_USER=postgres
 DB_PASS=supersecretpassword
 DB_SSL=false                  # true ở production
@@ -85,7 +85,7 @@ SMTP_PORT=587
 SMTP_SECURE=false             # true nếu dùng port 465
 SMTP_USER=noreply@giaisophaso.vn
 SMTP_PASS=your-app-password
-EMAIL_FROM="Smart Attendance <noreply@giaisophaso.vn>"
+EMAIL_FROM="eCheckAI <noreply@giaisophaso.vn>"
 
 # ─── WebSocket ────────────────────────────────────────────────────────────────
 WS_CORS_ORIGIN=http://localhost:5173,https://dashboard.smartattendance.vn
@@ -118,11 +118,11 @@ LOG_FORMAT=pretty             # pretty | json (json ở production)
 VITE_API_URL=http://localhost:3000/api/v1
 VITE_WS_URL=http://localhost:3000
 # VITE_GOOGLE_MAPS_API_KEY=   ← MVP: không dùng, nhập lat/lng bằng tay
-VITE_APP_NAME="Smart Attendance"
+VITE_APP_NAME="eCheckAI"
 VITE_APP_VERSION=1.0.0
 
 # PWA
-VITE_PWA_NAME="Smart Attendance"
+VITE_PWA_NAME="eCheckAI"
 VITE_PWA_SHORT_NAME="SA"
 VITE_PWA_THEME_COLOR=#49B7C3
 ```
@@ -155,7 +155,7 @@ REDIS_VERSION=7-alpine
 NODE_VERSION=20-alpine
 
 # ─── PostgreSQL ───────────────────────────────────────────────────────────────
-POSTGRES_DB=smart_attendance
+POSTGRES_DB=echeck_ai
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=supersecretpassword
 POSTGRES_PORT=5432
@@ -165,11 +165,11 @@ REDIS_PORT=6379
 
 # ─── Backend ──────────────────────────────────────────────────────────────────
 BACKEND_PORT=3000
-BACKEND_IMAGE=smart-attendance-backend:latest
+BACKEND_IMAGE=echeck-ai-backend:latest
 
 # ─── Web PWA ──────────────────────────────────────────────────────────────────
 WEB_PORT=80
-WEB_IMAGE=smart-attendance-web:latest
+WEB_IMAGE=echeck-ai-web:latest
 
 # ─── Nginx ────────────────────────────────────────────────────────────────────
 NGINX_PORT=80

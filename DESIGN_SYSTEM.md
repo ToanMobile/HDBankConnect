@@ -1,11 +1,11 @@
 ---
-name: smart-attendance-design
-description: Unified design system cho Smart Attendance V2 — bao gồm React Native mobile (nhân viên) và PWA dashboard (admin). Design tokens dùng chung, guidelines riêng cho từng platform.
+name: echeck-ai-design
+description: Unified design system cho eCheckAI V2 — bao gồm React Native mobile (nhân viên) và PWA dashboard (admin). Design tokens dùng chung, guidelines riêng cho từng platform.
 scope: mobile-react-native + web-pwa-nextjs
 version: 1.0.0
 ---
 
-> **Brand**: Smart Attendance V2 (Giải Pháp Số)
+> **Brand**: eCheckAI V2 (Giải Pháp Số)
 > **Philosophy**: Minimal, trustworthy, efficient — UI không cản trở người dùng chấm công. Mỗi pixel phải có lý do tồn tại.
 > **Platforms**: React Native 0.73+ (mobile worker app) + React 18 / Next.js (admin dashboard PWA)
 
@@ -423,7 +423,7 @@ Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 - Pull-to-refresh dùng `RefreshControl` built-in
 - Empty states: illustration + 1 dòng mô tả + primary action
 
-### 3.6 Mobile Screens Checklist (Smart Attendance)
+### 3.6 Mobile Screens Checklist (eCheckAI)
 
 | Screen | Key UI elements |
 |---|---|
@@ -621,7 +621,7 @@ Một số concept xuất hiện ở cả hai platforms nhưng implement khác:
 ## 6. Brand Assets
 
 ### Logo
-- **Primary logo**: wordmark "Smart Attendance" với teal icon phía trước
+- **Primary logo**: wordmark "eCheckAI" với teal icon phía trước
 - **Icon only**: dùng cho app icon, favicon, compact spaces
 - **Minimum size**: 24px height cho icon, 80px width cho wordmark
 - **Clear space**: bằng height của icon ở tất cả 4 phía

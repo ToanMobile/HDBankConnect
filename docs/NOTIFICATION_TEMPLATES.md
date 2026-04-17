@@ -1,4 +1,4 @@
-# NOTIFICATION_TEMPLATES.md — Smart Attendance V2
+# NOTIFICATION_TEMPLATES.md — eCheckAI V2
 
 > Hai kênh: **Local Notification** (mobile, hiển thị cho nhân viên) và **Bot Notification** (Telegram/Zalo, gửi cho quản lý).  
 > Mọi thông báo phải rõ ràng: ai, làm gì, lúc nào, ở đâu.

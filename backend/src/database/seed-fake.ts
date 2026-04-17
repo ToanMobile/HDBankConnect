@@ -1,5 +1,5 @@
 /**
- * Fake-data seeder — generates realistic demo data for Smart Attendance V2.
+ * Fake-data seeder — generates realistic demo data for eCheckAI V2.
  *
  * Usage:
  *   FAKE_DATA=true npx ts-node -r tsconfig-paths/register src/database/seed-fake.ts
@@ -33,7 +33,7 @@ const db = new Client({
   port: parseInt(process.env['DB_PORT'] ?? '5432', 10),
   user: process.env['DB_USER'] ?? 'postgres',
   password: process.env['DB_PASS'] ?? 'postgres',
-  database: process.env['DB_NAME'] ?? 'smart_attendance',
+  database: process.env['DB_NAME'] ?? 'echeck_ai',
 });
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

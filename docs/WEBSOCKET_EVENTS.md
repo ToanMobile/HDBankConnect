@@ -1,4 +1,4 @@
-# WEBSOCKET_EVENTS.md — Smart Attendance V2
+# WEBSOCKET_EVENTS.md — eCheckAI V2
 
 > Socket.IO over WebSocket. Server: NestJS Gateway.  
 > Client: React PWA (admin dashboard). Mobile KHÔNG dùng WebSocket (dùng polling + local notification).

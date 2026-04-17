@@ -15,6 +15,7 @@ import {
 } from './attendance.entity';
 import { AutoCheckinDto } from './dto/auto-checkin.dto';
 import { ManualCheckinDto } from './dto/manual-checkin.dto';
+import { SelfManualCheckinDto } from './dto/self-manual-checkin.dto';
 import { AttendanceQueryDto } from './dto/attendance-query.dto';
 import { BranchService } from '../branch/branch.service';
 import { EmployeeService } from '../employee/employee.service';
@@ -358,6 +359,54 @@ export class AttendanceService {
     });
 
     return this.attendanceRepository.save(record);
+  }
+
+  /**
+   * Employee self-service makeup attendance submission.
+   * Creates a pending record with type=manual that managers can review.
+   */
+  async selfManualCheckin(
+    dto: SelfManualCheckinDto,
+    employeeId: string,
+  ): Promise<AttendanceRecord> {
+    const employee = await this.employeeService.getRedisCache(employeeId);
+    if (!employee) throw new NotFoundException('EMPLOYEE_NOT_FOUND');
+
+    // Limit to 7 days back
+    const todayVN = toVietnamDate(new Date().toISOString());
+    const daysAgo = Math.floor(
+      (new Date(todayVN).getTime() - new Date(dto.work_date).getTime()) / 86400000,
+    );
+    if (daysAgo > 7 || daysAgo < 0) {
+      throw new BadRequestException('WORK_DATE_OUT_OF_RANGE');
+    }
+    if (!dto.check_in && !dto.check_out) {
+      throw new BadRequestException('AT_LEAST_ONE_TIME_REQUIRED');
+    }
+
+    const record = this.attendanceRepository.create({
+      employeeId,
+      branchId: employee.branchId ?? '',
+      workDate: dto.work_date,
+      checkIn: dto.check_in ? new Date(dto.check_in) : undefined,
+      checkOut: dto.check_out ? new Date(dto.check_out) : undefined,
+      status: AttendanceStatus.MANUAL,
+      checkType: CheckType.MANUAL_CHECKIN,
+      note: `[Chấm bù] ${dto.note}`,
+      deviceSnapshot: { device_id: 'self-service', device_model: 'mobile', os_version: '', app_version: '' },
+    });
+
+    return this.attendanceRepository.save(record);
+  }
+
+  /**
+   * Get attendance records for a single employee (self-view).
+   */
+  async findMine(
+    employeeId: string,
+    query: AttendanceQueryDto,
+  ): Promise<PaginatedResult<AttendanceRecord>> {
+    return this.findAll({ ...query, employee_id: employeeId }, null);
   }
 
   async findAll(

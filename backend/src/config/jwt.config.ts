@@ -7,8 +7,8 @@ export const jwtConfig: JwtModuleAsyncOptions = {
     secret: configService.get<string>('JWT_SECRET', 'change-me-in-production'),
     signOptions: {
       expiresIn: configService.get<string>('JWT_ACCESS_EXPIRES', '15m'),
-      issuer: 'smart-attendance',
-      audience: 'smart-attendance-client',
+      issuer: 'echeck-ai',
+      audience: 'echeck-ai-client',
     },
   }),
 };

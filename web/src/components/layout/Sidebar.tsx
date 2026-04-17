@@ -6,8 +6,8 @@ import {
   Users,
   CalendarCheck,
   ShieldAlert,
-  Activity,
 } from 'lucide-react';
+import { FinOSLogo } from '@/components/ui/FinOSLogo';
 import { cn } from '@/lib/utils';
 import type { WsStatus } from '@/hooks/useAttendanceWebSocket';
 
@@ -83,19 +83,8 @@ export function Sidebar({ className, wsStatus = 'disconnected' }: SidebarProps):
       aria-label="Navigation chính"
     >
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 h-14 border-b border-neutral-200 shrink-0">
-        <div
-          className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-500"
-          aria-hidden="true"
-        >
-          <Activity className="w-4.5 h-4.5 text-white" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-neutral-950 leading-tight">
-            Smart Attendance
-          </p>
-          <p className="text-[10px] text-neutral-400 leading-tight">Giải Pháp Số</p>
-        </div>
+      <div className="flex items-center px-4 h-14 border-b border-neutral-200 shrink-0">
+        <FinOSLogo size={0.8} />
       </div>
 
       {/* Nav links */}

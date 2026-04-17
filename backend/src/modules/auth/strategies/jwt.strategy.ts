@@ -14,8 +14,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         'JWT_SECRET',
         'change-me-in-production',
       ),
-      issuer: 'smart-attendance',
-      audience: 'smart-attendance-client',
+      issuer: 'echeck-ai',
+      audience: 'echeck-ai-client',
     });
   }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# Smart Attendance V2 — Audit Loop Test Runner
+# eCheckAI V2 — Audit Loop Test Runner
 # ============================================================
 # Rule: chạy → audit failure → fix → lặp lại cho đến khi
 #        toàn bộ test XANH.
@@ -78,7 +78,7 @@ mkdir -p "${REPORT_DIR}"
 {
   echo "================================================================"
   echo "AUDIT LOOP RUN — $(date '+%Y-%m-%d %H:%M:%S')"
-  echo "Project: Smart Attendance V2"
+  echo "Project: eCheckAI V2"
   echo "Mode: UNIT=${RUN_UNIT}, E2E=${RUN_E2E}"
   echo "Max iterations: ${MAX_ITERATIONS}"
   echo "Timeout per round: ${TIMEOUT_SECONDS}s"
@@ -98,7 +98,7 @@ log() {
 print_banner() {
   echo ""
   echo -e "${CYAN}${BOLD}╔══════════════════════════════════════════════════════════╗${RESET}"
-  echo -e "${CYAN}${BOLD}║      Smart Attendance V2 — AUDIT LOOP TEST RUNNER        ║${RESET}"
+  echo -e "${CYAN}${BOLD}║      eCheckAI V2 — AUDIT LOOP TEST RUNNER        ║${RESET}"
   echo -e "${CYAN}${BOLD}╚══════════════════════════════════════════════════════════╝${RESET}"
   echo ""
 }

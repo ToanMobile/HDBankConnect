@@ -1,4 +1,4 @@
-# CLAUDE.md — Smart Attendance V2 (Giải Pháp Số)
+# CLAUDE.md — eCheckAI V2 (Giải Pháp Số)
 
 > **Role**: Senior Architect  
 > **Project**: Hệ thống chấm công thông minh Zero-Touch cho 100 chi nhánh, 5.000 nhân viên  
@@ -39,7 +39,7 @@
 ## 2. Project Structure
 
 ```
-smart-attendance-v2/
+echeck-ai-v2/
 ├── CLAUDE.md                    # File này — rules cho AI
 ├── PROMPT_LOG.md                # Log toàn bộ prompt & review
 ├── README.md                    # Setup guide & scale strategy
@@ -170,7 +170,7 @@ smart-attendance-v2/
 │   │       └── HeadlessTask.java           # Android fallback alarm
 │   │
 │   └── ios/
-│       └── SmartAttendance/
+│       └── ECheckAI/
 │           └── AppDelegate.swift           # iOS BGTask registration
 │
 └── web/                         # React PWA (admin dashboard)

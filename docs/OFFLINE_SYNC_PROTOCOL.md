@@ -1,4 +1,4 @@
-# OFFLINE_SYNC_PROTOCOL.md — Smart Attendance V2
+# OFFLINE_SYNC_PROTOCOL.md — eCheckAI V2
 
 > Nhân viên chấm công dù mất mạng. App lưu vào SQLite queue, sync khi có kết nối.  
 > Server xử lý batch với conflict detection, không duplicate record.

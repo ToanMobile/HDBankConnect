@@ -1,10 +1,10 @@
-# PROMPT_LOG.md — Smart Attendance V2
+# PROMPT_LOG.md — eCheckAI V2
 
-> Ghi chép quá trình làm việc với AI (Claude Code) để xây dựng dự án **Smart Attendance V2** — hệ thống chấm công Zero-Touch cho 100 chi nhánh, 5.000 nhân viên.
+> Ghi chép quá trình làm việc với AI (Claude Code) để xây dựng dự án **eCheckAI V2** — hệ thống chấm công Zero-Touch cho 100 chi nhánh, 5.000 nhân viên.
 >
 > AI Tool: **Claude Code** (Anthropic) — claude-opus-4-6 (1M context)
 > Author: VanToan — Đội Giải Pháp Số
-> Repo: `smart-attendance-v2`
+> Repo: `echeck-ai-v2`
 
 ---
 

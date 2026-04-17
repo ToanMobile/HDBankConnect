@@ -1,5 +1,5 @@
 {
-  "name": "smart-attendance-mobile",
+  "name": "echeck-ai-mobile",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.22.0",
+    "@react-navigation/bottom-tabs": "^7.15.9",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "axios": "^1.6.7",

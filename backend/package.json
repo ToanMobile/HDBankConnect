@@ -1,5 +1,5 @@
 {
-  "name": "smart-attendance-backend",
+  "name": "echeck-ai-backend",
   "version": "1.0.0",
   "scripts": {
     "build": "nest build",

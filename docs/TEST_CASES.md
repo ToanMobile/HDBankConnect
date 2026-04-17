@@ -1,7 +1,7 @@
-# TEST_CASES.md — Smart Attendance V2
+# TEST_CASES.md — eCheckAI V2
 # Master Test Specification & Runnable Audit Loop Reference
 
-> **Project**: Smart Attendance V2 (Giải Pháp Số)
+> **Project**: eCheckAI V2 (Giải Pháp Số)
 > **Last Updated**: 2026-04-16
 > **Maintainer**: Senior Architect
 > **Total Modules**: 14
@@ -1775,5 +1775,5 @@ backend/test/
 
 ---
 
-*Được tạo tự động bởi Senior Architect — Smart Attendance V2*
+*Được tạo tự động bởi Senior Architect — eCheckAI V2*
 *Tuân thủ AUDIT LOOP RULE: fix code, không fix test*

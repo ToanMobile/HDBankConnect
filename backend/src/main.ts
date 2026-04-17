@@ -69,7 +69,7 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
 
   console.log(
-    `[Bootstrap] Smart Attendance API running on http://localhost:${port}/api/v1`,
+    `[Bootstrap] eCheckAI API running on http://localhost:${port}/api/v1`,
   );
 }
 

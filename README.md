@@ -1,4 +1,4 @@
-# Smart Attendance V2
+# eCheckAI V2
 
 Zero-Touch Attendance System for 100 branches and 5,000 employees. Runs silently in the background on employee devices, verifying location (WiFi BSSID + GPS Geofencing) and then recording attendance automatically u2014 no manual tapping required.
 
@@ -88,8 +88,8 @@ Background scheduler fires near check-in window
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-org/smart-attendance-v2.git
-cd smart-attendance-v2
+git clone https://github.com/your-org/echeck-ai-v2.git
+cd echeck-ai-v2
 
 # 2. Copy env templates
 cp backend/.env.example backend/.env

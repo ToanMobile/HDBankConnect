@@ -1,4 +1,4 @@
-# Smart Attendance — Mobile App (React Native)
+# eCheckAI — Mobile App (React Native)
 
 Employee-facing mobile app that runs the **Zero-Touch auto check-in** flow:
 background scheduler fires near work hours, verifies WiFi + GPS + anti-fraud,

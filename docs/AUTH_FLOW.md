@@ -1,4 +1,4 @@
-# AUTH_FLOW.md — Smart Attendance V2
+# AUTH_FLOW.md — eCheckAI V2
 
 > JWT-based auth, access token 15min, refresh token 7 ngày.  
 > Roles: `super_admin` > `hr` > `branch_manager` > `employee`

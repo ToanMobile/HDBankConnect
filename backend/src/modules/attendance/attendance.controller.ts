@@ -15,6 +15,7 @@ import { Request } from 'express';
 import { AttendanceService } from './attendance.service';
 import { AutoCheckinDto } from './dto/auto-checkin.dto';
 import { ManualCheckinDto } from './dto/manual-checkin.dto';
+import { SelfManualCheckinDto } from './dto/self-manual-checkin.dto';
 import { AttendanceQueryDto } from './dto/attendance-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -67,6 +68,39 @@ export class AttendanceController {
     @CurrentUser() user: JwtPayload,
   ) {
     return this.attendanceService.manualCheckin(dto, user.sub);
+  }
+
+  // ─── Employee self-service endpoints ────────────────────────────────────────
+
+  /** Employee submits makeup attendance for a past date (up to 7 days back). */
+  @Post('self-manual')
+  @HttpCode(HttpStatus.CREATED)
+  @Roles(
+    EmployeeRole.EMPLOYEE,
+    EmployeeRole.BRANCH_MANAGER,
+    EmployeeRole.HR,
+    EmployeeRole.SUPER_ADMIN,
+  )
+  async selfManualCheckin(
+    @Body() dto: SelfManualCheckinDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.attendanceService.selfManualCheckin(dto, user.sub);
+  }
+
+  /** Employee views their own attendance records. */
+  @Get('my')
+  @Roles(
+    EmployeeRole.EMPLOYEE,
+    EmployeeRole.BRANCH_MANAGER,
+    EmployeeRole.HR,
+    EmployeeRole.SUPER_ADMIN,
+  )
+  async findMine(
+    @Query() query: AttendanceQueryDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.attendanceService.findMine(user.sub, query);
   }
 
   @Get()

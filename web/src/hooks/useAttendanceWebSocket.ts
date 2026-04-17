@@ -16,7 +16,7 @@ interface UseAttendanceWebSocketReturn {
 }
 
 /**
- * Connects to the Smart Attendance WebSocket server and syncs real-time
+ * Connects to the eCheckAI WebSocket server and syncs real-time
  * events (check-in / check-out / fraud / stats) into the Zustand store.
  *
  * Auto-reconnects with exponential backoff on disconnect.
