@@ -1,0 +1,62 @@
+version: '3.9'
+
+# Development overrides — use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+      target: ''
+    image: node:20-alpine
+    container_name: sa-backend-dev
+    command: npm run start:dev
+    env_file: ./backend/.env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      NODE_ENV: development
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sa-network
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+      target: ''
+    image: node:20-alpine
+    container_name: sa-web-dev
+    command: npm run dev
+    env_file: ./web/.env
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - sa-network
+    restart: unless-stopped
+
+  # nginx is disabled in dev — frontend runs on :5173, backend on :3000
+  nginx:
+    profiles:
+      - disabled
